@@ -9,9 +9,12 @@ using namespace std;
 /// Name space of UPC
 namespace upc {
   void PitchAnalyzer::autocorrelation(const vector<float> &x, vector<float> &r) const {
-
-    for (unsigned int l = 0; l < r.size(); ++l) {
+    for (unsigned int k = 0; k < r.size(); ++k) {
   		/// \TODO Compute the autocorrelation r[l]
+      for(unsigned int l=0; l < x.size()-1-k ; ++l ){
+        r[k] = r[k] + (x[l]*x[l+k]);
+      }
+      r[k]=r[k]/x.size();
     }
 
     if (r[0] == 0.0F) //to avoid log() and divide zero 
@@ -23,12 +26,20 @@ namespace upc {
       return;
 
     window.resize(frameLen);
+    unsigned int n=0;
 
     switch (win_type) {
     case HAMMING:
       /// \TODO Implement the Hamming window
+      for(unsigned int n=0; n<frameLen ; n++){
+        window[n]=0.54 - 0.46 * cos( 2.0 * M_PI * n/ ( frameLen - 1 ) );
+      }
       break;
     case RECT:
+      /// \TODO Implement the Rectangular window
+      for(unsigned int n=0; n<frameLen-1 ; n++){ //if(n>0 && n<frameLen-1){
+        window[n]=1;
+      }
     default:
       window.assign(frameLen, 1);
     }
@@ -50,7 +61,14 @@ namespace upc {
     /// \TODO Implement a rule to decide whether the sound is voiced or not.
     /// * You can use the standard features (pot, r1norm, rmaxnorm),
     ///   or compute and use other ones.
-    return true;
+    int th=-40;
+    bool unvoiced;
+    if(pot<th)
+      unvoiced=true;
+    else
+      unvoiced=false;
+  
+    return unvoiced;
   }
 
   float PitchAnalyzer::compute_pitch(vector<float> & x) const {
@@ -66,8 +84,7 @@ namespace upc {
     //Compute correlation
     autocorrelation(x, r);
 
-    vector<float>::const_iterator iR = r.begin(), iRMax = iR;
-
+    vector<float>::const_iterator iR= r.begin(), iRMax = iR;
     /// \TODO 
 	/// Find the lag of the maximum value of the autocorrelation away from the origin.<br>
 	/// Choices to set the minimum value of the lag are:
@@ -76,16 +93,47 @@ namespace upc {
     ///	   .
 	/// In either case, the lag should not exceed that of the minimum value of the pitch.
 
-    unsigned int lag = iRMax - r.begin();
+    while(*iR>0){
+      iR++;
+    }
+    if(iR<r.begin()+npitch_min)
+      iR += npitch_min;
+    iRMax= iR;
 
-    float pot = 10 * log10(r[0]);
+    while(iR != r.end()){
+      if(*iR>*iRMax){
+        iRMax=iR;
+      }
+      ++iR;
+    }
 
+    /*for(iR= r.begin() ; iR<r.end() ; ++iR){
+       if(*iR>*iRMax)
+          iRMax=iR;
+    }  */
+
+  /*float max=0;
+  float pos=0;
+    for(float n=1; n<r.size(); n++){
+      if(r[n]>max){
+        max=r[n];
+        pos=n;
+      }
+    }*/
+  
+  unsigned int lag = iRMax - r.begin(); 
+  float pot = 10 * log10(r[0]);
+  
     //You can print these (and other) features, look at them using wavesurfer
     //Based on that, implement a rule for unvoiced
     //change to #if 1 and compile
-#if 0
+    
+#if 1
     if (r[0] > 0.0F)
-      cout << pot << '\t' << r[1]/r[0] << '\t' << r[lag]/r[0] << endl;
+      cout << pot << '\t' << r[1]/r[0] << '\t' << r[lag]/r[0] << '\t' <<  endl;
+      /*vector<float>::const_iterator ps;
+      for (ps = r.begin(); ps < r.end(); ps++) 
+      cout << *ps << " "; */
 #endif
     
     if (unvoiced(pot, r[1]/r[0], r[lag]/r[0]))

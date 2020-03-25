@@ -50,7 +50,7 @@ int main(int argc, const char *argv[]) {
   // Read input sound file
   unsigned int rate;
   vector<float> x;
-  if (readwav_mono(input_wav, rate, x) != 0) {
+  if (readwav_mono(input_wav, rate, x) != 0) {  
     cerr << "Error reading input file " << input_wav << " (" << strerror(errno) << ")\n";
     return -2;
   }
@@ -64,6 +64,11 @@ int main(int argc, const char *argv[]) {
   /// \TODO
   /// Preprocess the input signal in order to ease pitch estimation. For instance,
   /// central-clipping or low pass filtering may be used.
+  //CENTER CLIPPING
+  for(int n=0; n<=n_len; ++n){
+    if(x[n]<-40)
+      x[n]=0;
+  }
   
   // Iterate for each frame and save values in f0 vector
   vector<float>::iterator iX;
@@ -76,6 +81,24 @@ int main(int argc, const char *argv[]) {
   /// \TODO
   /// Postprocess the estimation in order to supress errors. For instance, a median filter
   /// or time-warping may be used.
+
+ float x1,x2,x3;
+ for(int l=1; l<f0.size() ;++l){
+   x1=f0[l-1];
+   x2=f0[l];
+   x3=f0[l+1];
+
+  if( (x1 > x2 && x1 < x3) || (x1 < x2 && x1 > x3) ){
+    f0[l]=x1;
+  }
+  if( (x2 > x1 && x2 < x3) || (x2 < x1 && x2 > x3) ){
+    f0[l]=x2;
+  }
+  if( (x3 > x1 && x3 < x2) || (x3 < x1 && x3 > x2) ){
+    f0[l]=x3;
+  }
+
+ }
 
   // Write f0 contour into the output file
   ofstream os(output_txt);
