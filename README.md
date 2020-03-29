@@ -102,6 +102,7 @@ Ejercicios básicos
 		(r[0]), la autocorrelación normalizada de uno (r1norm = r[1] / r[0]) y el valor de la
 		autocorrelación en su máximo secundario (rmaxnorm = r[lag] / r[0]).
 
+
     <img src="img/recorte1.PNG" width="640" align="center">
 
 		Puede considerar, también, la conveniencia de usar la tasa de cruces por cero.
@@ -112,6 +113,7 @@ Ejercicios básicos
       - Use el detector de pitch implementado en el programa `wavesurfer` en una señal de prueba y compare
 	    su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
 		ilustrativa del resultado de ambos detectores.
+
 
      <img src="img/pitch_prog_wave_PROVA.PNG" width="640" align="center">
 
@@ -137,6 +139,7 @@ Ejercicios básicos
    * Ineserte una gráfica en la que se vea con claridad el resultado de su detctor de pitch junto al del
      detector de Wavesurfer. Aunque puede usarse Wavesurfer para obtener la representación, se valorará
 	 el uso de alternativas de mayor calidad (particularmente Python).
+
 
      <img src="img/pitch_prog_wave.PNG" width="640" align="center">
    
