@@ -83,7 +83,7 @@ Ejercicios básicos
 		(r[0]), la autocorrelación normalizada de uno (r1norm = r[1] / r[0]) y el valor de la
 		autocorrelación en su máximo secundario (rmaxnorm = r[lag] / r[0]).
 
-    <img src="img/recorte1.png" width="640" align="center">
+    <img src="img/recorte1.PNG" width="640" align="center">
 
 		Puede considerar, también, la conveniencia de usar la tasa de cruces por cero.
 
@@ -94,7 +94,7 @@ Ejercicios básicos
 	    su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
 		ilustrativa del resultado de ambos detectores.
 
-     <img src="img/recorte3.png" width="640" align="center">
+     <img src="img/recorte3.PNG" width="640" align="center">
 
           Aquí podemos observar dos contornos de pitch:
           El primero es el obtenido con nuestra mejor versión del programa. 
