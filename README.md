@@ -17,6 +17,10 @@ Ejercicios básicos
     	```.sh
       void PitchAnalyzer::autocorrelation(const vector<float> &x, vector<float> &r) const {
         for (unsigned int k = 0; k < r.size(); ++k) {
+<<<<<<< HEAD
+=======
+  	
+>>>>>>> 83e92ed1b06cf73cd209838c81255884e625597b
             for(unsigned int l=0; l < x.size()-1-k ; ++l ){
               r[k] = r[k] + (x[l]*x[l+k]);
             }
@@ -32,7 +36,10 @@ Ejercicios básicos
 	 posición del primer máximo secundario.
 
    <img src="img/Senyal_i_auto.png" width="640" align="center">
+<<<<<<< HEAD
    
+=======
+>>>>>>> 83e92ed1b06cf73cd209838c81255884e625597b
    Para la representación de las gráficas, hemos usado el siguiente código de Python:
       	```.sh
             import matplotlib.pyplot as plt
@@ -83,7 +90,11 @@ Ejercicios básicos
    	```.sh
       bool PitchAnalyzer::unvoiced(float pot, float r1norm, float rmaxnorm) const {
          bool unvoiced;
+<<<<<<< HEAD
                if (pot < -50 || r1norm < 0.7 || rmaxnorm < 0.3 || (r1norm<0.9 && rmaxnorm<0.4) )
+=======
+              if (pot < -50.5 || r1norm < 0.7 || rmaxnorm < 0.3 )
+>>>>>>> 83e92ed1b06cf73cd209838c81255884e625597b
                     unvoiced=true;
                else
                    unvoiced=false;
@@ -102,7 +113,10 @@ Ejercicios básicos
 		(r[0]), la autocorrelación normalizada de uno (r1norm = r[1] / r[0]) y el valor de la
 		autocorrelación en su máximo secundario (rmaxnorm = r[lag] / r[0]).
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 83e92ed1b06cf73cd209838c81255884e625597b
     <img src="img/recorte1.PNG" width="640" align="center">
 
 		Puede considerar, también, la conveniencia de usar la tasa de cruces por cero.
@@ -114,8 +128,12 @@ Ejercicios básicos
 	    su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
 		ilustrativa del resultado de ambos detectores.
 
+<<<<<<< HEAD
 
      <img src="img/pitch_prog_wave_PROVA.PNG" width="640" align="center">
+=======
+     <img src="img/recorte3.PNG" width="640" align="center">
+>>>>>>> 83e92ed1b06cf73cd209838c81255884e625597b
 
           Aquí podemos observar dos contornos de pitch:
           El primero es el obtenido con nuestra mejor versión del programa. 
@@ -126,6 +144,7 @@ Ejercicios básicos
     y el *score* TOTAL proporcionados por `pitch_evaluate` en la evaluación de la base de datos 
 	`pitch_db/train`..
 
+<<<<<<< HEAD
         ### Summary
         Num. frames:    11200 = 7045 unvoiced + 4155 voiced
         Unvoiced frames as voiced:      345/7045 (4.90 %)
@@ -135,13 +154,25 @@ Ejercicios básicos
 
         ===>    TOTAL:  91.22 %
         --------------------------
+=======
+        Unvoiced frames as voiced:      230/7045 (4.54 %)
+        Voiced frames as unvoiced:      330/4155 (7.94 %)
+        Gross voiced errors (+20.00%):  68/3825 (1.78 %)
+        MSE of fine errors:    2.26 %
+
+        TOTAL:    91,32 %
+>>>>>>> 83e92ed1b06cf73cd209838c81255884e625597b
 
    * Ineserte una gráfica en la que se vea con claridad el resultado de su detctor de pitch junto al del
      detector de Wavesurfer. Aunque puede usarse Wavesurfer para obtener la representación, se valorará
 	 el uso de alternativas de mayor calidad (particularmente Python).
 
+<<<<<<< HEAD
 
      <img src="img/pitch_prog_wave.PNG" width="640" align="center">
+=======
+   
+>>>>>>> 83e92ed1b06cf73cd209838c81255884e625597b
    
 
 Ejercicios de ampliación
