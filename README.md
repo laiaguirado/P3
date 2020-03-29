@@ -52,31 +52,28 @@ Ejercicios básicos
             plt.acorr(senyal, maxlags=20)
 
             plt.show()
-        	```
+        ```
         
 	 NOTA: es más que probable que tenga que usar Python, Octave/MATLAB u otro programa semejante para
 	 hacerlo. Se valorará la utilización de la librería matplotlib de Python.
 
    * Determine el mejor candidato para el periodo de pitch localizando el primer máximo secundario de la
      autocorrelación. Inserte a continuación el código correspondiente.
-
-        	```c
-            vector<float>::const_iterator iR= r.begin(), iRMax = iR;
-            while(*iR>0){
-              iR++;
-            }
-            if(iR<r.begin()+npitch_min)
-            iR += npitch_min;
-            iRMax= iR;
-
-            while(iR != r.end()){
-              if(*iR>*iRMax)
-                iRMax=iR;
-              ++iR;
-            }
-
-            unsigned int lag = iRMax - r.begin(); 
-        	```
+    ```c
+      vector<float>::const_iterator iR= r.begin(), iRMax = iR;
+      while(*iR>0){
+        iR++;
+      }
+      if(iR<r.begin()+npitch_min)
+       iR += npitch_min;
+      iRMax= iR;
+      while(iR != r.end()){
+        if(*iR>*iRMax)
+          iRMax=iR;
+        ++iR;
+      }
+      unsigned int lag = iRMax - r.begin(); 
+    ```
 
 
    * Implemente la regla de decisión sonoro o sordo e inserte el código correspondiente.
