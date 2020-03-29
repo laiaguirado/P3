@@ -17,10 +17,6 @@ Ejercicios básicos
     	```.sh
       void PitchAnalyzer::autocorrelation(const vector<float> &x, vector<float> &r) const {
         for (unsigned int k = 0; k < r.size(); ++k) {
-<<<<<<< HEAD
-=======
-  	
->>>>>>> 83e92ed1b06cf73cd209838c81255884e625597b
             for(unsigned int l=0; l < x.size()-1-k ; ++l ){
               r[k] = r[k] + (x[l]*x[l+k]);
             }
@@ -36,10 +32,7 @@ Ejercicios básicos
 	 posición del primer máximo secundario.
 
    <img src="img/Senyal_i_auto.png" width="640" align="center">
-<<<<<<< HEAD
-   
-=======
->>>>>>> 83e92ed1b06cf73cd209838c81255884e625597b
+
    Para la representación de las gráficas, hemos usado el siguiente código de Python:
       	```.sh
             import matplotlib.pyplot as plt
@@ -92,9 +85,6 @@ Ejercicios básicos
          bool unvoiced;
 <<<<<<< HEAD
                if (pot < -50 || r1norm < 0.7 || rmaxnorm < 0.3 || (r1norm<0.9 && rmaxnorm<0.4) )
-=======
-              if (pot < -50.5 || r1norm < 0.7 || rmaxnorm < 0.3 )
->>>>>>> 83e92ed1b06cf73cd209838c81255884e625597b
                     unvoiced=true;
                else
                    unvoiced=false;
