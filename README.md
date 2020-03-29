@@ -141,10 +141,10 @@ Ejercicios básicos
 
      <img src="img/pitch_prog_wave.PNG" width="640" align="center">
 
-      Aquí podemos observar dos contornos de pitch de una señal de prueba:
-      El primero es el obtenido con nuestra mejor versión del programa. 
-      La segunda gráfica es la del detector de pitch de wavesurfer.
-      Como obtenemos un 91.22% en la evaluación de la base de datos vemos que las dos gráficas obtenidas son muy parecidas
+          Aquí podemos observar dos contornos de pitch de una señal de prueba:
+          El primero es el obtenido con nuestra mejor versión del programa. 
+          La segunda gráfica es la del detector de pitch de wavesurfer.
+          Como obtenemos un 91.22% en la evaluación de la base de datos vemos que las dos gráficas obtenidas son muy parecidas
 
 
 Ejercicios de ampliación
@@ -191,7 +191,7 @@ Ejercicios de ampliación
         else if(x[n]<-th)   x[n]=x[n]+th;
         else                x[n]=0; //if(abs(x[n]<th))  x[n]=0;
       }
-      
+
       //MEDIAN FILTER
       float f1,f2,f3;
       vector<float> f0nuevo;
