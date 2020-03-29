@@ -14,11 +14,46 @@ Ejercicios básicos
   `get_pitch`.
 
    * Complete el cálculo de la autocorrelación e inserte a continuación el código correspondiente.
+    	```.sh
+      void PitchAnalyzer::autocorrelation(const vector<float> &x, vector<float> &r) const {
+        for (unsigned int k = 0; k < r.size(); ++k) {
+  	
+            for(unsigned int l=0; l < x.size()-1-k ; ++l ){
+              r[k] = r[k] + (x[l]*x[l+k]);
+            }
+           r[k]=r[k]/x.size();
+        }
+            if (r[0] == 0.0F) //to avoid log() and divide zero 
+             r[0] = 1e-10; 
+      }
+      ```
 
    * Inserte una gŕafica donde, en un *subplot*, se vea con claridad la señal temporal de un sonido sonoro
      y su periodo de pitch; y, en otro *subplot*, se vea con claridad la autocorrelación de la señal y la
 	 posición del primer máximo secundario.
 
+   <img src="img/Senyal_i_auto.png" width="640" align="center">
+   Para la representación de las gráficas, hemos usado el siguiente código de Python:
+      	```.sh
+            import matplotlib.pyplot as plt
+            import numpy as np
+            import soundfile as sf
+
+            senyal, fm = sf.read('sonor_a.wav')
+
+            t = np.arange(0, len(senyal)) / fm
+
+            plt.subplot(2,1,1)
+            plt.title('Senyal en temps')
+            plt.plot(t, senyal)
+
+            plt.subplot(2,1,2)
+            plt.title('Autocorrelació')
+            plt.acorr(senyal, maxlags=20)
+
+            plt.show()
+        	```
+        
 	 NOTA: es más que probable que tenga que usar Python, Octave/MATLAB u otro programa semejante para
 	 hacerlo. Se valorará la utilización de la librería matplotlib de Python.
 
@@ -26,6 +61,16 @@ Ejercicios básicos
      autocorrelación. Inserte a continuación el código correspondiente.
 
    * Implemente la regla de decisión sonoro o sordo e inserte el código correspondiente.
+   	```.sh
+      bool PitchAnalyzer::unvoiced(float pot, float r1norm, float rmaxnorm) const {
+         bool unvoiced;
+              if (pot < -50.5 || r1norm < 0.7 || rmaxnorm < 0.3 )
+                    unvoiced=true;
+               else
+                   unvoiced=false;
+         return unvoiced;
+       }
+    ```
 
 - Una vez completados los puntos anteriores, dispondrá de una primera versión del detector de pitch. El 
   resto del trabajo consiste, básicamente, en obtener las mejores prestaciones posibles con él.
@@ -38,6 +83,8 @@ Ejercicios básicos
 		(r[0]), la autocorrelación normalizada de uno (r1norm = r[1] / r[0]) y el valor de la
 		autocorrelación en su máximo secundario (rmaxnorm = r[lag] / r[0]).
 
+    <img src="img/recorte1.png" width="640" align="center">
+
 		Puede considerar, también, la conveniencia de usar la tasa de cruces por cero.
 
 	    Recuerde configurar los paneles de datos para que el desplazamiento de ventana sea el adecuado, que
@@ -46,12 +93,20 @@ Ejercicios básicos
       - Use el detector de pitch implementado en el programa `wavesurfer` en una señal de prueba y compare
 	    su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
 		ilustrativa del resultado de ambos detectores.
+
+     <img src="img/recorte2.png" width="640" align="center">
+
+          Aquí podemos observar tres contornos de pitch:
+          El primero es el obtenido con nuestra mejor versión del programa. 
+          La segunda gráfica es la del fichero de referencia del contorno de pitch que nos ha sido proporcionada.
+          La tercera y última gráfica es la del detector de pitch de wavesurfer.
+          Como podemos observar las dos primeras gráficas son parecidas ya que nuestro programa tiene una alta calidad en la estimación del pitch. 
   
   * Optimice los parámetros de su sistema de detección de pitch e inserte una tabla con las tasas de error
     y el *score* TOTAL proporcionados por `pitch_evaluate` en la evaluación de la base de datos 
 	`pitch_db/train`..
 
-   * Inserte una gráfica en la que se vea con claridad el resultado de su detector de pitch junto al del
+   * Ineserte una gráfica en la que se vea con claridad el resultado de su detctor de pitch junto al del
      detector de Wavesurfer. Aunque puede usarse Wavesurfer para obtener la representación, se valorará
 	 el uso de alternativas de mayor calidad (particularmente Python).
    
