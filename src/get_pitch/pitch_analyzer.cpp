@@ -1,113 +1,125 @@
 /// @file
 
 #include <iostream>
-#include <fstream>
-#include <string.h>
-#include <errno.h>
-
-#include "wavfile_mono.h"
+#include <math.h>
 #include "pitch_analyzer.h"
 
-#include "docopt.h"
-
-#define FRAME_LEN   0.030 /* 30 ms. */
-#define FRAME_SHIFT 0.015 /* 15 ms. */
-
 using namespace std;
-using namespace upc;
 
-static const char USAGE[] = R"(
-get_pitch - Pitch Detector 
-Usage:
-    get_pitch [options] <input-wav> <output-txt>
-    get_pitch (-h | --help)
-    get_pitch --version
-Options:
-    -h, --help  Show this screen
-    --version   Show the version of the project
-Arguments:
-    input-wav   Wave file with the audio signal
-    output-txt  Output file: ASCII file with the result of the detection:
-                    - One line per frame with the estimated f0
-                    - If considered unvoiced, f0 must be set to f0 = 0
-)";
-
-int main(int argc, const char *argv[]) {
-	/// \TODO 
-	///  Modify the program syntax and the call to **docopt()** in order to
-	///  add options and arguments to the program.
-    std::map<std::string, docopt::value> args = docopt::docopt(USAGE,
-        {argv + 1, argv + argc},	// array of arguments, without the program name
-        true,    // show help if requested
-        "2.0");  // version string
-
-	std::string input_wav = args["<input-wav>"].asString();
-	std::string output_txt = args["<output-txt>"].asString();
-
-  // Read input sound file
-  unsigned int rate;
-  vector<float> x;
-  if (readwav_mono(input_wav, rate, x) != 0) {  
-    cerr << "Error reading input file " << input_wav << " (" << strerror(errno) << ")\n";
-    return -2;
+/// Name space of UPC
+namespace upc {
+  void PitchAnalyzer::autocorrelation(const vector<float> &x, vector<float> &r) const {
+    for (unsigned int k = 0; k < r.size(); ++k) {
+  		/// \TODO Compute the autocorrelation r[l]
+      for(unsigned int l=0; l < x.size()-1-k ; ++l ){
+        r[k] = r[k] + (x[l]*x[l+k]);
+      }
+      r[k]=r[k]/x.size();
+    }
+    if (r[0] == 0.0F) //to avoid log() and divide zero 
+      r[0] = 1e-10; 
   }
 
-  int n_len = rate * FRAME_LEN;
-  int n_shift = rate * FRAME_SHIFT;
+  void PitchAnalyzer::set_window(Window win_type) {
+    if (frameLen == 0)
+      return;
 
-  // Define analyzer
-  PitchAnalyzer analyzer(n_len, rate, PitchAnalyzer::HAMMING, 50, 500);
+    window.resize(frameLen);
 
-  /// \TODO
-  /// Preprocess the input signal in order to ease pitch estimation. For instance,
-  /// central-clipping or low pass filtering may be used.
-  //CENTER CLIPPING
+    switch (win_type) {
+    case HAMMING:
+      /// \TODO Implement the Hamming window
+      for(unsigned int n=0; n<frameLen ; n++){
+        window[n]=0.54 - 0.46 * cos( 2.0 * M_PI * n/ ( frameLen - 1 ) );
+      }
+    break;
 
-  /*float max=0;
-  for(unsigned int n=0; n<x.size(); ++n){
-    max=0.842773*0.3;
-    if(abs(x[n]<max))
-      x[n]=0;
-  }*/
+    case RECT:
+      /// \TODO Implement the Rectangular window
+      for(unsigned int n=0; n<frameLen-1 ; n++){ 
+        window[n]=1;
+      }
+    break;
 
-  // Iterate for each frame and save values in f0 vector
-  vector<float>::iterator iX;
-  vector<float> f0;
-  for (iX = x.begin(); iX + n_len < x.end(); iX = iX + n_shift) {
-    float f = analyzer(iX, iX + n_len);
-    f0.push_back(f);
+    default:
+      window.assign(frameLen, 1);
+    }
   }
 
-  /// \TODO
-  /// Postprocess the estimation in order to supress errors. For instance, a median filter
-  /// or time-warping may be used.
+  void PitchAnalyzer::set_f0_range(float min_F0, float max_F0) {
+    npitch_min = (unsigned int) samplingFreq/max_F0;
+    if (npitch_min < 2)
+      npitch_min = 2;  // samplingFreq/2
 
- /*float f1,f2,f3;
- vector<float> f0nuevo;
- f0nuevo=f0;
- for(unsigned int l=1; l<f0.size()-1 ;++l){
-   f1=f0[l-1];
-   f2=f0[l];
-   f3=f0[l+1];
-  if( (f1 > f2 && f1 < f3) || (f1 < f2 && f1 > f3) )
-    f0nuevo[l]=f1;
-  if( (f2 > f1 && f2 < f3) || (f2 < f1 && f2 > f3) )
-    f0nuevo[l]=f2;
-  if( (f3 > f1 && f3 < f2) || (f3 < f1 && f3 > f2) )
-    f0nuevo[l]=f3;
- }*/
+    npitch_max = 1 + (unsigned int) samplingFreq/min_F0;
 
-  // Write f0 contour into the output file
-  ofstream os(output_txt);
-  if (!os.good()) {
-    cerr << "Error reading output file " << output_txt << " (" << strerror(errno) << ")\n";
-    return -3;
+    //frameLen should include at least 2*T0
+    if (npitch_max > frameLen/2)
+      npitch_max = frameLen/2;
   }
 
-  os << 0 << '\n'; //pitch at t=0
-  for (iX = f0.begin(); iX != f0.end(); ++iX) 
-    os << *iX << '\n';
-  os << 0 << '\n';//pitch at t=Dur
+  bool PitchAnalyzer::unvoiced(float pot, float r1norm, float rmaxnorm) const {
+    /// \TODO Implement a rule to decide whether the sound is voiced or not.
+    /// * You can use the standard features (pot, r1norm, rmaxnorm),
+    ///   or compute and use other ones.
+    bool unvoiced;
+    if (pot < -50 || r1norm < 0.7 || rmaxnorm < 0.3 || (r1norm<0.9 && rmaxnorm<0.4) )
+      unvoiced=true;
+    else
+      unvoiced=false;
+    return unvoiced;
+  }
 
-  return 0;
+  float PitchAnalyzer::compute_pitch(vector<float> & x) const {
+    if (x.size() != frameLen)
+      return -1.0F;
+
+    //Window input frame
+    for (unsigned int i=0; i<x.size(); ++i)
+      x[i] *= window[i];
+
+    vector<float> r(npitch_max);
+    
+    //Compute correlation
+    autocorrelation(x, r);
+
+    /// \TODO 
+	/// Find the lag of the maximum value of the autocorrelation away from the origin.<br>
+	/// Choices to set the minimum value of the lag are:
+	///    - The first negative value of the autocorrelation.
+	///    - The lag corresponding to the maximum value of the pitch.
+	/// In either case, the lag should not exceed that of the minimum value of the pitch.
+
+    vector<float>::const_iterator iR= r.begin(), iRMax = iR;
+    while(*iR>0){
+      iR++;
+    }
+    if(iR<r.begin()+npitch_min)
+      iR += npitch_min;
+    iRMax= iR;
+
+    while(iR != r.end()){
+      if(*iR>*iRMax)
+        iRMax=iR;
+      ++iR;
+    }
+
+  unsigned int lag = iRMax - r.begin(); 
+  float pot = 10 * log10(r[0]);
+  
+    //You can print these (and other) features, look at them using wavesurfer
+    //Based on that, implement a rule for unvoiced
+    //change to #if 1 and compile
+    
+#if 1
+    if (r[0] > 0.0F)
+      cout << pot << '\t' << r[1]/r[0] << '\t' << r[lag]/r[0] << '\t' <<  endl;
+      
+#endif
+    
+    if (unvoiced(pot, r[1]/r[0], r[lag]/r[0]))
+      return 0;
+    else
+      return (float) samplingFreq/(float) lag;
+  }
 }
