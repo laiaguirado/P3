@@ -39,7 +39,7 @@ Ejercicios básicos
             import numpy as np
             import soundfile as sf
 
-            senyal, fm = sf.read('sonor_a.wav')
+            senyal, fm = sf.read('pav_2181.wav')
 
             t = np.arange(0, len(senyal)) / fm
 
