@@ -114,10 +114,10 @@ Ejercicios básicos
 
      <img src="img/pitch_prog_wave_PROVA.PNG" width="640" align="center">
 
-          Aquí podemos observar dos contornos de pitch:
-          El primero es el obtenido con nuestra mejor versión del programa. 
-          La segunda gráfica es la del detector de pitch de wavesurfer.
-          Como podemos observas los contornos de pitch son muy parecidos pero a distintas escalas debido a la configuracion del wavesurfer. 
+          Aquí podemos observar dos contornos de pitch de una señal de prueba:
+          El primera gráfica es la del detector de pitch de wavesurfer.
+          La segunda es el obtenido con nuestra mejor versión del programa. 
+          Como podemos observar los contornos de pitch son muy parecidos.
   
   * Optimice los parámetros de su sistema de detección de pitch e inserte una tabla con las tasas de error
     y el *score* TOTAL proporcionados por `pitch_evaluate` en la evaluación de la base de datos 
@@ -140,6 +140,11 @@ Ejercicios básicos
 
 
      <img src="img/pitch_prog_wave.PNG" width="640" align="center">
+
+      Aquí podemos observar dos contornos de pitch de una señal de prueba:
+      El primero es el obtenido con nuestra mejor versión del programa. 
+      La segunda gráfica es la del detector de pitch de wavesurfer.
+      Como obtenemos un 91.22% en la evaluación de la base de datos vemos que las dos gráficas obtenidas son muy parecidas
 
 
 Ejercicios de ampliación
@@ -174,6 +179,35 @@ Ejercicios de ampliación
 
   Incluya, a continuación, una explicación de las técnicas incorporadas al detector. Se valorará la
   inclusión de gráficas, tablas, código o cualquier otra cosa que ayude a comprender el trabajo realizado.
+
+      Hemos intentado mejorar el código introduciendo técnicas de preprocesado y postprocesado y aunque no hemos conseguido mejores resultados por algun motivo que desconocemos, hemos pensado en adjuntarlas en este apartado:
+      
+   	```c      
+      //CENTER CLIPPING
+      float max=*max_element(x.begin(), x.end());
+      float th=max*0.3;
+      for(unsigned int n=0; n<x.size(); ++n){
+        if(x[n]>th)         x[n]=x[n]-th;
+        else if(x[n]<-th)   x[n]=x[n]+th;
+        else                x[n]=0; //if(abs(x[n]<th))  x[n]=0;
+      }
+      
+      //MEDIAN FILTER
+      float f1,f2,f3;
+      vector<float> f0nuevo;
+      f0nuevo=f0;
+      for(unsigned int l=1; l<f0.size()-1 ;++l){
+        f1=f0[l-1];
+        f2=f0[l];
+        f3=f0[l+1];
+      if( (f1 > f2 && f1 < f3) || (f1 < f2 && f1 > f3) )
+        f0nuevo[l]=f1;
+      if( (f2 > f1 && f2 < f3) || (f2 < f1 && f2 > f3) )
+        f0nuevo[l]=f2;
+      if( (f3 > f1 && f3 < f2) || (f3 < f1 && f3 > f2) )
+        f0nuevo[l]=f3;
+      }
+   	```
 
   También se valorará la realización de un estudio de los parámetros involucrados. Por ejemplo, si se opta
   por implementar el filtro de mediana, se valorará el análisis de los resultados obtenidos en función de
