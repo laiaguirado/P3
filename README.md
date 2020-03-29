@@ -94,21 +94,29 @@ Ejercicios básicos
 	    su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
 		ilustrativa del resultado de ambos detectores.
 
-     <img src="img/recorte2.png" width="640" align="center">
+     <img src="img/recorte3.png" width="640" align="center">
 
-          Aquí podemos observar tres contornos de pitch:
+          Aquí podemos observar dos contornos de pitch:
           El primero es el obtenido con nuestra mejor versión del programa. 
-          La segunda gráfica es la del fichero de referencia del contorno de pitch que nos ha sido proporcionada.
-          La tercera y última gráfica es la del detector de pitch de wavesurfer.
-          Como podemos observar las dos primeras gráficas son parecidas ya que nuestro programa tiene una alta calidad en la estimación del pitch. 
+          La segunda gráfica es la del detector de pitch de wavesurfer.
+          Como podemos observas los contornos de pitch son muy parecidos pero a distintas escalas debido a la configuracion del wavesurfer. 
   
   * Optimice los parámetros de su sistema de detección de pitch e inserte una tabla con las tasas de error
     y el *score* TOTAL proporcionados por `pitch_evaluate` en la evaluación de la base de datos 
 	`pitch_db/train`..
 
+        Unvoiced frames as voiced:      230/7045 (4.54 %)
+        Voiced frames as unvoiced:      330/4155 (7.94 %)
+        Gross voiced errors (+20.00%):  68/3825 (1.78 %)
+        MSE of fine errors:    2.26 %
+
+        TOTAL:    91,32 %
+
    * Ineserte una gráfica en la que se vea con claridad el resultado de su detctor de pitch junto al del
      detector de Wavesurfer. Aunque puede usarse Wavesurfer para obtener la representación, se valorará
 	 el uso de alternativas de mayor calidad (particularmente Python).
+
+   
    
 
 Ejercicios de ampliación
